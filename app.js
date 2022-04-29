@@ -171,8 +171,6 @@ app.get("/TACTIV/goal-user", (req, res) => {
                 console.log(err);
             }else {
                 res.send(result);
-                console.log(result);
-                console.log(id_user);
             }
         })
 });
@@ -185,8 +183,30 @@ app.get("/TACTIV/stepcount-user", (req, res) => {
                 console.log(err);
             }else {
                 res.send(result);
-                console.log(result);
-                console.log(id_user);
+            }
+        })
+});
+
+app.get("/TACTIV/hostoric-goal-user", (req, res) => {
+    const id_user = req.session.user[0].id;
+    db.query("SELECT *  FROM goal WHERE id_user = ? ORDER BY date DESC",[id_user],
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
+            }
+        })
+});
+
+app.get("/TACTIV/hostoric-measure-user", (req, res) => {
+    const id_user = req.session.user[0].id;
+    db.query("SELECT DATE(date) as 'date', SUM(distance) AS 'count' FROM measure WHERE id_user = ? GROUP BY DATE(date) ORDER BY DATE(date) DESC",[id_user],
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
             }
         })
 });
@@ -194,7 +214,16 @@ app.get("/TACTIV/stepcount-user", (req, res) => {
 
 // ---------------------------------------------------UPDATE / PUT-----------------------------------------------------
 
-
+app.put("/TACTIV/goal-validation", (req, res) => {
+    const id_user = req.session.user[0].id;
+    db.query("UPDATE goal SET validation = 1 WHERE DATE(date) = CURDATE() AND id_user = ? ORDER BY date DESC LIMIT 1 ", id_user,
+        (err, result) => {
+            if (err) {
+                console.log(err);
+            }else
+                console.log(result);
+        });
+});
 
 
 // --------------------------------------------------DELETE / DELETE---------------------------------------------------
