@@ -143,6 +143,22 @@ app.post("/TACTIV/goal-add", (req, res) => {
                 res.send({message : "Enregitré"});
         });
 });
+app.post("/TACTIV/activity-add", (req, res) => {
+    const name = req.body.name;
+    const place = req.body.placeNumber;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const type = req.body.type;
+    const description = req.body.description;
+
+    db.query("INSERT INTO activity (name, place, start_date, end_date, type, description) VALUES (?,?,?,?,?,?) ", [name,place,startDate,endDate,type,description],
+        (err) => {
+            if (err) {
+                console.log(err);
+            }else
+                res.send({message : "Enregitré"});
+        });
+});
 // ---------------------------------------------------READ / GET-------------------------------------------------------
 app.get("/", (req, res) => {
     res.send('Server started')
@@ -187,7 +203,7 @@ app.get("/TACTIV/stepcount-user", (req, res) => {
         })
 });
 
-app.get("/TACTIV/hostoric-goal-global", (req, res) => {
+app.get("/TACTIV/historic-goal-global", (req, res) => {
 
     db.query("SELECT name, DATE(date) as 'date', count,validation FROM goal LEFT JOIN user ON goal.id_user = user.id ORDER BY DATE(date) DESC",
         (err, result) => {
@@ -199,9 +215,9 @@ app.get("/TACTIV/hostoric-goal-global", (req, res) => {
         })
 });
 
-app.get("/TACTIV/hostoric-measure-gloabal", (req, res) => {
+app.get("/TACTIV/historic-measure-global", (req, res) => {
 
-    db.query("SELECT name, DATE(date) as 'date', SUM(distance) AS 'count' FROM measure ORDER BY name, DATE(date) DESC",
+    db.query("SELECT name, DATE(date) as 'date', SUM(distance) AS 'count' FROM measure LEFT JOIN user ON measure.id_user = user.id GROUP BY name, DATE(date) ORDER BY name, DATE(date) DESC",
         (err, result) => {
             if (err){
                 console.log(err);
@@ -234,6 +250,19 @@ app.get("/TACTIV/hostoric-measure-user", (req, res) => {
             }
         })
 });
+
+app.get("/TACTIV/activity-sub-user", (req, res) => {
+    const id_activity = req.body.id_activity;
+    db.query("SELECT (*),COUNT()  FROM activity LEFT JOIN   WHERE id_user = ? ORDER BY date DESC",[id_user],
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
+            }
+        })
+});
+
 
 
 // ---------------------------------------------------UPDATE / PUT-----------------------------------------------------
