@@ -187,6 +187,30 @@ app.get("/TACTIV/stepcount-user", (req, res) => {
         })
 });
 
+app.get("/TACTIV/hostoric-goal-global", (req, res) => {
+
+    db.query("SELECT name, DATE(date) as 'date', count,validation FROM goal LEFT JOIN user ON goal.id_user = user.id ORDER BY DATE(date) DESC",
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
+            }
+        })
+});
+
+app.get("/TACTIV/hostoric-measure-gloabal", (req, res) => {
+
+    db.query("SELECT name, DATE(date) as 'date', SUM(distance) AS 'count' FROM measure ORDER BY name, DATE(date) DESC",
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
+            }
+        })
+});
+
 app.get("/TACTIV/hostoric-goal-user", (req, res) => {
     const id_user = req.session.user[0].id;
     db.query("SELECT *  FROM goal WHERE id_user = ? ORDER BY date DESC",[id_user],
