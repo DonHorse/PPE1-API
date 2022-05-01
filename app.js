@@ -1,16 +1,17 @@
 // Page server, API, sert à faire le lien entre le front et le back : les requêtes sql et configurations de connexion sont ici
 
 // import des librairies
-const express = require("express");
-const app = express();
-const mysql = require("mysql");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
 
+import express from "express";
+import mysql from "mysql";
+import cors from "cors";
+import bodyParser from "body-parser";
+import cookieParser from"cookie-parser";
+import session from "express-session";
+import bcrypt from "bcrypt";
+
+const saltRounds = 10;
+const app = express();
 
 
 // Paramétrages server
@@ -324,7 +325,7 @@ app.put("/TACTIV/goal-validation", (req, res) => {
 
 
 //PORT SERVER API
-app.listen(3001, () => {
+export default app.listen(3001, () => {
     console.log("server on port 3001");
 });
 
