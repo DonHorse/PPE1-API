@@ -159,6 +159,43 @@ app.post("/TACTIV/activity-add", (req, res) => {
                 res.send({message : "Enregitré"});
         });
 });
+
+app.post("/TACTIV/activity-sub-user", (req, res) => {
+    const id_activity = req.body.id_activity;
+    const id_user = req.session.user[0].id;
+
+    db.query("SELECT * FROM activity_signup WHERE id_user = ? AND id_activity = ?",[id_user, id_activity],
+        (err, result1) => {
+            if (err){
+                console.log(err);
+            }if(result1.length > 0){
+                res.send({message : "Déjà enregistré sur cette activité "});
+            }else{
+                db.query("SELECT COUNT(activity_signup.id), place AS count FROM activity_signup JOIN activity ON activity_signup.id_activity = activity.id WHERE id_activity = ?",[id_activity],
+                    (err, result2) => {
+                        if (err){
+                            console.log(err);
+                        }else {
+                            if(result2.count >= result2.place){
+                                res.send({message : "Plus de place disponible"});
+                            }else{
+                                db.query("INSERT INTO activity_signup (id_activity, id_user) VALUES (?,?) ",[id_activity,id_user],
+                                    (err) => {
+                                        if (err){
+                                            console.log(err);
+                                        }else {
+                                            res.send({message : "Participation Enregitré"});
+                                        }
+                                    })
+                            }
+                        }
+                    })
+            }
+        })
+
+
+});
+
 // ---------------------------------------------------READ / GET-------------------------------------------------------
 app.get("/", (req, res) => {
     res.send('Server started')
@@ -251,9 +288,10 @@ app.get("/TACTIV/hostoric-measure-user", (req, res) => {
         })
 });
 
-app.get("/TACTIV/activity-sub-user", (req, res) => {
-    const id_activity = req.body.id_activity;
-    db.query("SELECT (*),COUNT()  FROM activity LEFT JOIN   WHERE id_user = ? ORDER BY date DESC",[id_user],
+
+app.get("/TACTIV/activity-list", (req, res) => {
+
+    db.query("SELECT * FROM activity WHERE start_date > CURDATE()  ORDER BY start_date DESC",
         (err, result) => {
             if (err){
                 console.log(err);
