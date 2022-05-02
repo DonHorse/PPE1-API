@@ -105,7 +105,7 @@ app.post("/TACTIV/login", (req, res) => {
                 bcrypt.compare(password, result[0].password, (error, response) => {
                     if (response) {
                         req.session.user= result;
-                        console.log(req.session.user);
+
                         res.send(result);
 
                     } if (err) {
@@ -302,6 +302,66 @@ app.get("/TACTIV/activity-list", (req, res) => {
         })
 });
 
+app.get("/TACTIV/hostoric-measure-user-date-week", (req, res) => {
+    const id_user = req.session.user[0].id;
+    db.query("SELECT DATE(date) as 'date', SUM(distance) AS 'count' FROM measure WHERE id_user = ? AND DATE(date) > DATE_ADD(DATE(CURDATE()), INTERVAL -1 WEEK) GROUP BY DATE(date) ORDER BY DATE(date) DESC",[id_user],
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
+            }
+        })
+});
+
+app.get("/TACTIV/hostoric-measure-user-date-1m", (req, res) => {
+    const id_user = req.session.user[0].id;
+    db.query("SELECT DATE(date) as 'date', SUM(distance) AS 'count' FROM measure WHERE id_user = ? AND DATE(date) > DATE_ADD(DATE(CURDATE()), INTERVAL -1 MONTH) GROUP BY DATE(date) ORDER BY DATE(date) DESC",[id_user],
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+
+                res.send(result);
+            }
+        })
+});
+
+app.get("/TACTIV/hostoric-measure-user-date-3m", (req, res) => {
+    const id_user = req.session.user[0].id;
+    db.query("SELECT DATE(date) as 'date', SUM(distance) AS 'count' FROM measure WHERE id_user = ? AND DATE(date) > DATE_ADD(DATE(CURDATE()), INTERVAL -3 MONTH) GROUP BY DATE(date) ORDER BY DATE(date) DESC",[id_user],
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
+            }
+        })
+});
+
+app.get("/TACTIV/hostoric-measure-user-date-6m", (req, res) => {
+    const id_user = req.session.user[0].id;
+    db.query("SELECT DATE(date) as 'date', SUM(distance) AS 'count' FROM measure WHERE id_user = ? AND DATE(date) > DATE_ADD(DATE(CURDATE()), INTERVAL -6 MONTH) GROUP BY DATE(date) ORDER BY DATE(date) DESC",[id_user],
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
+            }
+        })
+});
+
+app.get("/TACTIV/hostoric-measure-user-date-1a", (req, res) => {
+    const id_user = req.session.user[0].id;
+    db.query("SELECT DATE(date) as 'date', SUM(distance) AS 'count' FROM measure WHERE id_user = ? AND DATE(date) > DATE_ADD(DATE(CURDATE()), INTERVAL -1 YEAR) GROUP BY DATE(date) ORDER BY DATE(date) DESC",[id_user],
+        (err, result) => {
+            if (err){
+                console.log(err);
+            }else {
+                res.send(result);
+            }
+        })
+});
 
 
 // ---------------------------------------------------UPDATE / PUT-----------------------------------------------------
